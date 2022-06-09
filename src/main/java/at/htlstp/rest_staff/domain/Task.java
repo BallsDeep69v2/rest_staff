@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.hibernate.Hibernate;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.Past;
@@ -30,7 +29,6 @@ public class Task {
     private Employee employee;
 
     @Past
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Column(name = "finished_date")
     private LocalDate finished;
 

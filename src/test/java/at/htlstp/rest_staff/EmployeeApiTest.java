@@ -49,15 +49,15 @@ class EmployeeApiTest {
 
         @Test
         @DirtiesContext
-            // nur beim Verändern von Daten anzuwenden
-        void throwsIfInvalidEmployeeIsSaved() throws Exception {
+        void updatesEmployeeIfAlreadyExists() throws Exception {
             var json = """
                     {
-                       "id": "NEU",
-                       "firstName": "Neu"
+                       "id": "HUBE",
+                       "firstName": "Neu",
+                       "lastName": "Neu"
                     }
                     """;
-            var resource = "/api/employees/NEU";
+            var resource = "/api/employees/HUBE";
 
             mockMvc.perform(post("/api/employees")
                             .contentType(APPLICATION_JSON)
@@ -69,6 +69,7 @@ class EmployeeApiTest {
                     .andExpect(status().isOk())
                     .andExpect(content().json(json));
         }
+
 
 
     }
