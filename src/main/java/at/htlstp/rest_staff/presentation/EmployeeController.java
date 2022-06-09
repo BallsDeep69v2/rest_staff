@@ -55,7 +55,7 @@ public record EmployeeController(EmployeeRepository employeeRepository) {
     public int allHoursWorkedByEmployee(@PathVariable String id) {
         try {
             return employeeRepository.getAllHoursWorkedByEmployee(id);
-        } catch (AopInvocationException e) {//catch, falls der Employee noch keine Tasks hat
+        } catch (AopInvocationException e) {//Wenn der Employee keine Tasks hat, wird 0 returned
             return 0;
         }
     }
