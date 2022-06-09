@@ -25,8 +25,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, String> {
             """
                     select employee
                     from Employee employee
-                    where employee.firstName like %:name%
-                    or employee.lastName like %:name%
+                    where lower(employee.firstName) like %:name%
+                    or lower(employee.lastName) like %:name%
                     """
     )
     List<Employee> searchByName(String name);
@@ -37,9 +37,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, String> {
                     select sum(task.hoursWorked)
                     from Task task
                     where task.employee.id = :employeeId
-                                        """
+                 """
     )
-    int getAllHoursByEmployee(String employeeId);
+    int getAllHoursWorkedByEmployee(String employeeId);
 
     @Query(
             """

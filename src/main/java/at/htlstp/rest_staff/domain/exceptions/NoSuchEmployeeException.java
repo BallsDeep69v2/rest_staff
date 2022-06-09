@@ -8,7 +8,4 @@ public class NoSuchEmployeeException extends ResponseStatusException {
         super(HttpStatus.NOT_FOUND);
     }
 
-    public NoSuchEmployeeException(String message) {
-        super(HttpStatus.NOT_FOUND, message);
-    }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("api/employees")
@@ -32,6 +33,8 @@ public record EmployeeController(EmployeeRepository employeeRepository) {
         if (partial_name == null || partial_name.isBlank()) {
             return employeeRepository.findAll();
         }
+        partial_name = partial_name.toLowerCase(Locale.ROOT);
+
         return employeeRepository.searchByName(partial_name);
     }
 
@@ -51,15 +54,17 @@ public record EmployeeController(EmployeeRepository employeeRepository) {
     @GetMapping("{id}/hoursWorked")
     public int allHoursWorkedByEmployee(@PathVariable String id) {
         try {
-            return employeeRepository.getAllHoursByEmployee(id);
-        } catch (AopInvocationException e) {
+            return employeeRepository.getAllHoursWorkedByEmployee(id);
+        } catch (AopInvocationException e) {//catch, falls der Employee noch keine Tasks hat
             return 0;
         }
     }
 
     @GetMapping("{id}/tasks")
     public List<Task> allTasksBetweenForEmployee(@PathVariable String id, @RequestParam(name = "from", required = false) String from, @RequestParam(name = "to", required = false) String to) {
+        //Wenn beide Felder null sind, werden einfach alle Tasks ausgegeben
         if (from == null && to == null) return employeeRepository.findTasksForEmployee(id);
+        //Wenn nur ein Feld null ist, wird eine BAD-Request geschmissen
         if (from == null || to == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
         return employeeRepository.findTasksBetween(id, LocalDate.parse(from), LocalDate.parse(to));

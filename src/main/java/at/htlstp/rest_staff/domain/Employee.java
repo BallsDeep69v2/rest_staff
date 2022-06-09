@@ -1,6 +1,7 @@
 package at.htlstp.rest_staff.domain;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -15,6 +16,8 @@ import java.util.Objects;
 @Entity
 @Getter
 @Table(name="staff")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Employee {
     @Id
     @Size(max = 6)

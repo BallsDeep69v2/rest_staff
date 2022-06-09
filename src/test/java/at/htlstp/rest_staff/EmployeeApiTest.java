@@ -46,6 +46,31 @@ class EmployeeApiTest {
                     .andExpect(status().isOk())
                     .andExpect(content().json(json));
         }
+
+        @Test
+        @DirtiesContext
+            // nur beim Verändern von Daten anzuwenden
+        void throwsIfInvalidEmployeeIsSaved() throws Exception {
+            var json = """
+                    {
+                       "id": "NEU",
+                       "firstName": "Neu"
+                    }
+                    """;
+            var resource = "/api/employees/NEU";
+
+            mockMvc.perform(post("/api/employees")
+                            .contentType(APPLICATION_JSON)
+                            .content(json))
+                    .andExpect(status().isCreated())
+                    .andExpect(header().string("Location", "http://localhost" + resource))
+                    .andExpect(content().json(json)).andReturn();
+            mockMvc.perform(get(resource))
+                    .andExpect(status().isOk())
+                    .andExpect(content().json(json));
+        }
+
+
     }
 
     @Nested
@@ -67,11 +92,56 @@ class EmployeeApiTest {
         }
 
         @Test
-        void returnStatusNotFound() throws Exception {
+        void returnStatusNotFoundIfEmployeeDoesNotExist() throws Exception {
             var resource = "/api/employees/TypDenEsNichtGibt";
+
             mockMvc.perform(get(resource))
                     .andExpect(status().isNotFound());
         }
+
+        @Test
+        void findByNameWorks() throws Exception {
+            var resource = "/api/employees?name=Bar";
+
+            var json = """
+                    [
+                        {"id":"SCMI","firstName":"Barbara","lastName":"Schmidt"}
+                    ]
+                    """;
+
+            mockMvc.perform(get(resource))
+                    .andExpect(content().json(json));
+        }
+
+        @Test
+        void findByNameIgnoresCase() throws Exception {
+            var resource = "/api/employees?name=bar";
+
+            var json = """
+                    [
+                        {"id":"SCMI","firstName":"Barbara","lastName":"Schmidt"}
+                    ]
+                    """;
+
+            mockMvc.perform(get(resource))
+                    .andExpect(content().json(json));
+        }
+
+        @Test
+        void findByNameReturnsEmptyIfNameDoesNotMatch() throws Exception {
+            var resource = "/api/employees?name=moritz";
+
+            var json = """
+                    [
+                        
+                    ]
+                    """;
+
+            mockMvc.perform(get(resource))
+                    .andExpect(content().json(json));
+        }
+
+
     }
 
     @Nested
